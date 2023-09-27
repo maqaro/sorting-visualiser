@@ -87,9 +87,9 @@ def main():
             elif event.key == pygame.K_b and sorting == False:
                 current_Sort = bubble_sort
             elif event.key == pygame.K_i and sorting == False:
-                current_Sort = insetion_sort
+                current_Sort = insertion_sort
             elif event.key == pygame.K_m and sorting == False:
-                current_Sort = marge_sort
+                current_Sort = merge_sort
             elif event.key == pygame.K_q and sorting == False:
                 current_Sort = quick_sort
                 
@@ -123,9 +123,9 @@ def draw_gui(Window, sort, ascending = False):
 
     if sort == bubble_sort:
         sort_gui =  pygame.image.load('Assets/Gui/bubble.png')
-    elif sort == insetion_sort:
+    elif sort == insertion_sort:
         sort_gui =  pygame.image.load('Assets/Gui/insertion.png')
-    elif sort == marge_sort:
+    elif sort == merge_sort:
         sort_gui =  pygame.image.load('Assets/Gui/merge.png')
     elif sort == quick_sort:
         sort_gui =  pygame.image.load('Assets/Gui/quick.png')
@@ -166,19 +166,43 @@ def bubble_sort(wndw, ascending=True):
                 # Swap the elements
                 lst[j], lst[j + 1] = lst[j + 1], lst[j]
 
-                # Visualize the swap and yeild
+                # Visualize the swap if required
                 draw_list(wndw, {j: wndw.green, j + 1: wndw.red}, True)
+
+                # Yield True if this step was performed
                 yield True
 
     # Return the sorted list
     return lst
 
 
-def insetion_sort(wndw, ascending=True):
-    pass
+
+def insertion_sort(wndw, ascending=True):
+    lst = wndw.lst
+    n = len(lst)
+
+    for i in range(1, n):
+        key = lst[i]
+        j = i - 1
+
+        while j >= 0 and ((key < lst[j] and ascending) or (key > lst[j] and not ascending)):
+            lst[j + 1] = lst[j]
+            j -= 1
+
+            # Visualize the swap if required
+            draw_list(wndw, {j + 1: wndw.green, j: wndw.red}, True)
+
+            # Yield True if this step was performed
+            yield True
+
+        lst[j + 1] = key
+
+    # Return the sorted list
+    return lst
 
 
-def marge_sort(wndw, ascending=True):
+
+def merge_sort(wndw, ascending=True):
     pass
 
 
