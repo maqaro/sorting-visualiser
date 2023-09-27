@@ -10,14 +10,12 @@ class Window:
     white = 255, 255, 255
     green = 0, 255, 0
     red = 255, 0, 0
-    background_colour = white
+    background_colour = 32, 32, 32
 
-    list_colours = [(128, 128, 128), (160, 160, 160), (192, 192, 192)]
+    list_colours = [(255, 255, 255), (224, 224, 224), (192, 192, 192)]
 
-    text_font = pygame.font.Font('Assets/League.otf', 40)
-
-    side_padding = 100 ## padding distance for the side of the window
-    top_padding = 200 ## padding distance for the top of the screen
+    side_padding = 75 ## padding distance for the side of the window
+    top_padding = 150 ## padding distance for the top of the screen
 
     def __init__(self, width, height, lst) -> None:
         ## sets up the window
@@ -42,17 +40,16 @@ def main():
     clock = pygame.time.Clock()
 
     ## values for the list
-    list_n = 50
+    list_n = 100
     list_min = 0
     list_max = 100
     lst = generate_list(list_n, list_min, list_max)
     window = Window(1280, 800, lst) ## instantiates window
 
     sorting = False
-    ascending = False
+    ascending = True
 
     current_Sort = bubble_sort
-    current_name = 'Bubble Sort'
     algo_generator = None
 
     while running:
@@ -64,9 +61,9 @@ def main():
             except StopIteration:
                 sorting = False
         else:
-            draw_window(window)
+            draw_window(window, current_Sort, ascending)
 
-        draw_window(window)
+        draw_window(window, current_Sort, ascending)
         pygame.display.update()
 
         for event in pygame.event.get():
@@ -80,13 +77,21 @@ def main():
                 lst = generate_list(list_n, list_min, list_max)
                 window.set_list(lst)
                 sorting = False
-            elif event.key == pygame.K_SPACE and sorting == False: ## if space key is pressed, start sorting
+            elif event.key == pygame.K_s and sorting == False: ## if s key is pressed, start sorting
                 sorting = True
                 algo_generator = current_Sort(window, ascending)
             elif event.key == pygame.K_a and sorting == False:
                 ascending = True
             elif event.key == pygame.K_d and sorting == False:
                 ascending = False
+            elif event.key == pygame.K_b and sorting == False:
+                current_Sort = bubble_sort
+            elif event.key == pygame.K_i and sorting == False:
+                current_Sort = insetion_sort
+            elif event.key == pygame.K_m and sorting == False:
+                current_Sort = marge_sort
+            elif event.key == pygame.K_q and sorting == False:
+                current_Sort = quick_sort
                 
 
 
@@ -100,18 +105,35 @@ def generate_list(n, min_value, max_value):
     return starting_list
 
 
-def draw_window(Window):
+def draw_window(Window, current_sort, ascending):
     Window.window.fill(Window.background_colour)
 
-    control_text = Window.text_font.render('R - RESET | SPACE - Start | A - Ascending | D - Descending', 1, Window.black)
-    Window.window.blit(control_text, (Window.width/2 - control_text.get_width()/2, 10))
-
-    algorithm_text = Window.text_font.render('B - Bubble | I - Insertion | M - Merge | Q - Quick', 1, Window.black)
-    Window.window.blit(algorithm_text, (Window.width/2 - algorithm_text.get_width()/2, 60))
-
+    draw_gui(Window, current_sort, ascending)
     draw_list(Window)
     pygame.display.update()
 
+
+def draw_gui(Window, sort, ascending = False):
+    command_gui =  pygame.image.load('Assets/Gui/commands.png')
+
+    if ascending:
+        order_gui = pygame.image.load('Assets/Gui/ascending.png')
+    elif not ascending:
+        order_gui = pygame.image.load('Assets/Gui/descending.png')
+
+    if sort == bubble_sort:
+        sort_gui =  pygame.image.load('Assets/Gui/bubble.png')
+    elif sort == insetion_sort:
+        sort_gui =  pygame.image.load('Assets/Gui/insertion.png')
+    elif sort == marge_sort:
+        sort_gui =  pygame.image.load('Assets/Gui/merge.png')
+    elif sort == quick_sort:
+        sort_gui =  pygame.image.load('Assets/Gui/quick.png')
+
+    Window.window.blit(command_gui, (0,0))
+    Window.window.blit(order_gui, (0, 50))
+    Window.window.blit(sort_gui, (0, 100))
+    
 
 def draw_list(Window, positions = {}, clear_background = False):
     lst = Window.lst
