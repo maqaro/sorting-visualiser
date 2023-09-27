@@ -156,6 +156,7 @@ def draw_list(Window, positions = {}, clear_background = False):
     if clear_background:
         pygame.display.update()
 
+
 def bubble_sort(wndw, ascending=True):
     lst = wndw.lst
     n = len(lst)
@@ -201,13 +202,89 @@ def insertion_sort(wndw, ascending=True):
     return lst
 
 
-
 def merge_sort(wndw, ascending=True):
-    pass
+    def merge(lst, left, right, low, mid, high):
+        i = j = 0
+        k = low
+
+        while i < len(left) and j < len(right):
+            if (left[i] <= right[j] and ascending) or (left[i] >= right[j] and not ascending):
+                lst[k] = left[i]
+                i += 1
+            else:
+                lst[k] = right[j]
+                j += 1
+            k += 1
+
+            # Visualize the comparison step
+            draw_list(wndw, {k - 1: wndw.red, i + low: wndw.green, j + mid + 1: wndw.green}, True)
+            yield True
+
+        while i < len(left):
+            lst[k] = left[i]
+            i += 1
+            k += 1
+            yield True
+
+        while j < len(right):
+            lst[k] = right[j]
+            j += 1
+            k += 1
+            yield True
+
+    def merge_sort_recursive(lst, low, high):
+        if low < high:
+            mid = (low + high) // 2
+
+            yield from merge_sort_recursive(lst, low, mid)
+            yield from merge_sort_recursive(lst, mid + 1, high)
+
+            left = lst[low:mid + 1]
+            right = lst[mid + 1:high + 1]
+
+            yield from merge(lst, left, right, low, mid, high)
+
+    lst = wndw.lst
+    n = len(lst)
+    yield from merge_sort_recursive(lst, 0, n - 1)
+
+    # Return the sorted list
+    return lst
+
 
 
 def quick_sort(wndw, ascending=True):
-    pass
+    def partition(lst, low, high):
+        pivot = lst[high]
+        i = low - 1
+
+        for j in range(low, high):
+            if (lst[j] < pivot and ascending) or (lst[j] > pivot and not ascending):
+                i += 1
+                lst[i], lst[j] = lst[j], lst[i]
+                # Visualize the swap if required
+                draw_list(wndw, {i: wndw.green, j: wndw.red}, True)
+                yield True
+
+        lst[i + 1], lst[high] = lst[high], lst[i + 1]
+        # Visualize the swap if required
+        draw_list(wndw, {i + 1: wndw.green, high: wndw.red}, True)
+        yield True
+
+        yield from quick_sort_recursive(lst, low, i)
+        yield from quick_sort_recursive(lst, i + 2, high)
+
+    def quick_sort_recursive(lst, low, high):
+        if low < high:
+            yield from partition(lst, low, high)
+
+    lst = wndw.lst
+    n = len(lst)
+    yield from quick_sort_recursive(lst, 0, n - 1)
+
+    # Return the sorted list
+    return lst
+
 
 if __name__ == '__main__':
     main()
