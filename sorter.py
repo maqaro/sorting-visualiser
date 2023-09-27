@@ -23,6 +23,8 @@ class Window:
         self.height = height
         self.window = pygame.display.set_mode((width, height))
         pygame.display.set_caption('Sorting Visualiser')
+        icon = pygame.image.load('Assets/Icon/icon.png')
+        pygame.display.set_icon(icon)
         self.set_list(lst)
 
     def set_list(self, lst): ## list to be sorted
@@ -40,7 +42,7 @@ def main():
     clock = pygame.time.Clock()
 
     ## values for the list
-    list_n = 100
+    list_n = 250
     list_min = 0
     list_max = 100
     lst = generate_list(list_n, list_min, list_max)
